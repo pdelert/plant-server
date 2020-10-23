@@ -1,4 +1,4 @@
-package pl.plant.server;
+package pl.plant.server.data;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import lombok.AllArgsConstructor;

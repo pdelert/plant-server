@@ -1,14 +1,18 @@
-package pl.plant.server;
+package pl.plant.server.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.HttpRequest;
+import pl.plant.server.data.Event;
+import pl.plant.server.service.TimeService;
+import pl.plant.server.request.EventRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -46,7 +50,7 @@ public class EventController {
     }
 
     @POST
-    public Response createEvent(EventRequest eventRequest, @Context SecurityContext ctx, @Context HttpRequest httpRequest) {
+    public Response createEvent(@Valid EventRequest eventRequest, @Context SecurityContext ctx, @Context HttpRequest httpRequest) {
         LocalDateTime currentUtcTime = timeService.getCurrentUtcTime();
         String user = Optional.ofNullable(ctx.getUserPrincipal())
                 .map(Principal::getName)
@@ -59,10 +63,10 @@ public class EventController {
         Event event = Event
                 .builder()
                 .id(uuid)
-                .dryLevel(eventRequest.getDryLevel())
+                .dryLevel(eventRequest.getDryLevel().doubleValue())
                 .eventType(eventRequest.getEventType())
-                .rawValue(eventRequest.getRawValue())
-                .threshold(eventRequest.getThreshold())
+                .rawValue(eventRequest.getRawValue().intValue())
+                .threshold(eventRequest.getThreshold().doubleValue())
                 .user(user)
                 .ip(httpRequest.getRemoteAddress())
                 .time(currentUtcTime)

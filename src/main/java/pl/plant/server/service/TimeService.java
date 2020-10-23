@@ -1,4 +1,4 @@
-package pl.plant.server;
+package pl.plant.server.service;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.time.LocalDateTime;

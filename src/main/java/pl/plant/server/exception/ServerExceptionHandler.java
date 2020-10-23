@@ -1,4 +1,4 @@
-package pl.plant.server;
+package pl.plant.server.exception;
 
 import lombok.extern.slf4j.Slf4j;
 
