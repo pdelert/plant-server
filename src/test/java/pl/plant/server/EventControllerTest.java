@@ -3,6 +3,8 @@ package pl.plant.server;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -10,12 +12,11 @@ import static org.hamcrest.CoreMatchers.is;
 public class EventControllerTest {
 
     @Test
-    public void testHelloEndpoint() {
+    public void initTest() {
         given()
-          .when().get("/resteasy/hello")
-          .then()
-             .statusCode(200)
-             .body(is("hello"));
+                .when().get("/plant/server/events/" + UUID.randomUUID())
+                .then()
+                .statusCode(204);
     }
 
 }

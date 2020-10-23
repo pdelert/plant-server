@@ -1,0 +1,23 @@
+
+stages:
+  - build
+  - push
+build:
+  image: openjdk:11-slim
+  stage: build
+  script: ./mvnw package
+  artifacts:
+    paths:
+      - target/plant-server-*-runner.jar
+      - target/lib
+push:
+  stage: push
+  only:
+    - master
+  image: docker:stable
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $CI_REGISTRY/pdelert/plant-server .
+    - docker push $CI_REGISTRY/pdelert/plant-server
