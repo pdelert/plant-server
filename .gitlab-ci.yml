@@ -10,6 +10,12 @@ build:
     paths:
       - target/plant-server-*-runner.jar
       - target/lib
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    # Improve performance with overlayfs.
+    DOCKER_DRIVER: overlay2
 push:
   stage: push
   only:
