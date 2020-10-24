@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -27,6 +24,7 @@ public class Event extends PanacheEntityBase {
     @Column(name = "event_id")
     private UUID id;
     @Column(name = "event_type")
+    @Enumerated(EnumType.STRING)
     private EventType eventType;
     @Column(name = "time")
     private LocalDateTime time;
