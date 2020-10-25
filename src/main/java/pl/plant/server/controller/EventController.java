@@ -12,8 +12,10 @@ import pl.plant.server.request.EventRequest;
 import pl.plant.server.response.EventDto;
 import pl.plant.server.service.EventService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.resource.spi.SecurityPermission;
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -50,12 +52,14 @@ public class EventController {
 
     @GET
     @Path("/{id}")
+    @RolesAllowed("read:events")
     public EventDto getEvent(@PathParam("id") UUID id) {
         log.info("Looking for event: {}", id);
         return eventMapper.map(eventService.findBy(id));
     }
 
     @GET
+    @RolesAllowed("read:events")
     public List<EventDto> getEvents(@Valid @BeanParam EventListRequest eventListRequest) {
         LocalDateTime startTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(eventListRequest.getStart()), ZoneOffset.UTC);
         LocalDateTime endTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(eventListRequest.getEnd()), ZoneOffset.UTC);
@@ -64,6 +68,7 @@ public class EventController {
     }
 
     @POST
+    @RolesAllowed("write:events")
     public Response createEvent(@Valid EventRequest eventRequest, @Context SecurityContext ctx, @Context HttpRequest httpRequest) {
         String user = Optional.ofNullable(ctx.getUserPrincipal())
                 .map(Principal::getName)

@@ -15,12 +15,14 @@ import pl.plant.server.data.EventType;
 import pl.plant.server.request.EventRequest;
 import pl.plant.server.service.EventService;
 
+import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.HttpHeaders;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
@@ -31,11 +33,15 @@ public class EventControllerTest {
     @InjectMock
     EventService eventService;
 
+    @Inject
+    JwtTokenService jwtTokenService;
+
     @Test
     public void shouldReturnNotFound() {
         Mockito.when(eventService.findBy(Mockito.any(UUID.class))).thenThrow(new NotFoundException());
 
         given()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtTokenService.createToken("pi", 30, Set.of("read:events")))
                 .contentType(ContentType.JSON)
                 .when().get("/plant/server/events/" + UUID.randomUUID())
                 .then()
@@ -51,6 +57,7 @@ public class EventControllerTest {
                 .numberReturnType(JsonPathConfig.NumberReturnType.DOUBLE);
         given()
                 .config(RestAssuredConfig.config().jsonConfig(jsonConfig))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtTokenService.createToken("pi", 30, Set.of("read:events")))
                 .contentType(ContentType.JSON)
                 .when().get("/plant/server/events/" + event.getId())
                 .then()
@@ -67,6 +74,7 @@ public class EventControllerTest {
                 .thenReturn(Collections.singletonList(event));
 
         given()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtTokenService.createToken("pi", 30, Set.of("read:events")))
                 .contentType(ContentType.JSON)
                 .when().get("/plant/server/events?start={start}&end={end}", 1603486676, 1603573076)
                 .then()
@@ -76,6 +84,7 @@ public class EventControllerTest {
     @Test
     public void shouldThrowBadRequestWhenRequestingList() {
         given()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtTokenService.createToken("pi", 30, Set.of("read:events")))
                 .contentType(ContentType.JSON)
                 .when().get("/plant/server/events?start={start}&end={end}", 1603573076, 1603486676)
                 .then()
@@ -90,11 +99,28 @@ public class EventControllerTest {
         given()
                 .when()
                 .with()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtTokenService.createToken("pi", 30, Set.of("write:events")))
                 .contentType(ContentType.JSON)
                 .body(eventRequest, ObjectMapperType.JSONB)
                 .post("/plant/server/events/")
                 .then()
                 .statusCode(400);
+    }
+
+    @Test
+    public void shouldThrowForbidden() {
+        EventRequest eventRequest = EventRequest
+                .builder()
+                .build();
+        given()
+                .when()
+                .with()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtTokenService.createToken("pi", 30, Set.of("read:events")))
+                .contentType(ContentType.JSON)
+                .body(eventRequest, ObjectMapperType.JSONB)
+                .post("/plant/server/events/")
+                .then()
+                .statusCode(403);
     }
 
     @Test
@@ -113,6 +139,7 @@ public class EventControllerTest {
         given()
                 .when()
                 .with()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtTokenService.createToken("pi", 30, Set.of("write:events")))
                 .contentType(ContentType.JSON)
                 .body(eventRequest, ObjectMapperType.JSONB)
                 .post("/plant/server/events/")
