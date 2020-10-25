@@ -8,8 +8,8 @@
   <properties>
     <surefire-plugin.version>2.22.1</surefire-plugin.version>
     <maven.compiler.target>11</maven.compiler.target>
-    <quarkus.platform.version>1.9.0.Final</quarkus.platform.version>
     <maven.compiler.source>11</maven.compiler.source>
+    <quarkus.platform.version>1.9.0.Final</quarkus.platform.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -17,6 +17,7 @@
     <quarkus-plugin.version>1.9.0.Final</quarkus-plugin.version>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
+    <org.mapstruct.version>1.4.1.Final</org.mapstruct.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -30,6 +31,17 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${org.mapstruct.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct-processor</artifactId>
+      <version>${org.mapstruct.version}</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-resteasy-jsonb</artifactId>
@@ -90,7 +102,7 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.18.16</version>
-      <scope>provided</scope>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
   <build>
